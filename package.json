@@ -1,0 +1,15 @@
+{
+  "name": "cityrankinghub",
+  "version": "1.0.0",
+  "description": "a website's backend to ranking cities",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "cityrankinghub"
+  },
+  "author": "Quentin Vespero",
+  "license": "ISC"
+}
