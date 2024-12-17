@@ -1,0 +1,29 @@
+services:
+    backend:
+        build: .
+        container_name: backend_app
+        # env_file: .env
+        ports:
+            - "5001:5001"
+        volumes:
+            - .:/app # here, /app is being synchronised with the local folder
+            - /app/node_modules # on the other hand, node_module has its own volume inside the docker container
+        # environment:
+        #     - MONGODB_URI=mongodb://mongo:27017/cityRankingHub
+        #     - PORT=5001
+        command: 
+            npm run dev
+            # npm run start
+        depends_on:
+            - mongo
+
+    mongo:
+        image: mongo:8
+        container_name: mongodb
+        ports:
+            - "27017:27017"
+        volumes:
+            - mongo-data:/data/db
+
+volumes:
+    mongo-data:

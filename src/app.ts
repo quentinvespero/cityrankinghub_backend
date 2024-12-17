@@ -1,8 +1,5 @@
-import { configDotenv } from "dotenv"
 import express from 'express'
-import mongoose from "mongoose"
-
-configDotenv()
+// import dbConnection from './config/dbConnection'
 
 const app = express()
 
@@ -10,14 +7,9 @@ const app = express()
 app.use(express.json())
 
 // routes
-app.use('/api/cityRankingHub')
+// app.get('/api/cityRankingHub')
 
-// database connection
-const MONGO_URI = process.env.MONGO_URI || 'error : no MONGO_URI given for mongoDB uri'
-
-mongoose
-    .connect(MONGO_URI)
-    .then(() => console.log('connection to mongoDB database OK :)') )
-    .catch((err) => console.error('error while trying to connect to mongoDB',err))
+// db connection
+// dbConnection()
 
 export default app

@@ -5,6 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "dev": "nodemon src/server.ts",
+    "build":"tsc",
     "test": "vitest",
     "start": "node dist/server.js"
   },
