@@ -1,5 +1,5 @@
 import express from 'express'
-// import dbConnection from './config/dbConnection'
+import dbConnection from './config/dbConnection'
 
 const app = express()
 
@@ -10,6 +10,6 @@ app.use(express.json())
 // app.get('/api/cityRankingHub')
 
 // db connection
-// dbConnection()
+dbConnection()
 
 export default app
