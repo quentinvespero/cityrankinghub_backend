@@ -2,43 +2,34 @@ services:
     backend:
         build: .
         container_name: cityRankingHub_backend
-        # env_file: .env
         ports:
-            - "5001:5001"
+            - "${NODE_PORT}:${NODE_PORT}"
         volumes:
             - .:/app # here, /app is being synchronised with the current local folder
             - /app/node_modules # on the other hand, node_module has its own volume inside the docker container
         environment:
-            - MONGODB_URI=mongodb://admin:${MONGO_INITDB_ROOT_PASSWORD}@db:27017/cityrankinghub
-            - PORT=5001
+            - MONGODB_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@db:${MONGO_PORT}/${MONGO_INITDB_DATABASE}
+            - PORT=${NODE_PORT}
         command: 
             npm run dev
             # npm run start
         depends_on:
             - db
-        secrets:
-            - mongo_root_password
 
     db:
         image: mongo:8
         container_name: cityRankingHub_db
         ports:
-            - "27017:27017"
+            - "${MONGO_PORT}:${MONGO_PORT}"
         volumes:
             - mongo_data:/data/db
         environment:
             # those variables below are recognised by docker when initialising the container
             # it will sets up the admin user with these credentials (this user can manage all databases in the instance of mongoDB)
             # it will create the given database
-            - MONGO_INITDB_ROOT_USERNAME=admin
-            - MONGO_INITDB_ROOT_PASSWORD=./mdp_docker_secret
-            - MONGO_INITDB_DATABASE=cityrankinghub
-        secrets:
-            - mongo_root_password
+            - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+            - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+            - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
 
 volumes:
     mongo_data:
-
-secrets:
-    mongo_root_password:
-        file:./secrets/mongo_root_password

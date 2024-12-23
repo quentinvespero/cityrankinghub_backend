@@ -1,13 +1,13 @@
-import dotenv from 'dotenv'
 import mongoose from "mongoose"
-
-dotenv.config()
+import { MONGO_URI } from "./globalConfig"
 
 const dbConnection = async () => {
     try {
-        const uri = process.env.MONGO_URI || 'error : no MONGO_URI given for mongoDB uri'
-
-        await mongoose.connect(uri)
+        console.log('----------------------------')
+        console.log(MONGO_URI)
+        console.log('----------------------------')
+        
+        await mongoose.connect(MONGO_URI)
         console.log('connection to mongoDB database OK :)')
     }
     catch (err) {

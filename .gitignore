@@ -23,6 +23,3 @@ dist-ssr
 *.sln
 *.sw?
 .env
-
-# mdp for mongo in docker compose
-mdp_docker_secret
