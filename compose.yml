@@ -4,11 +4,12 @@ services:
         container_name: cityRankingHub_backend
         ports:
             - "${NODE_PORT}:${NODE_PORT}"
+        # ***** ↓ FOR PROD ↓ *****
         volumes:
             - .:/app # here, /app is being synchronised with the current local folder
             - /app/node_modules # on the other hand, node_module has its own volume inside the docker container
         environment:
-            - MONGODB_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@db:${MONGO_PORT}/${MONGO_INITDB_DATABASE}
+            # - MONGODB_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@db:${MONGO_PORT}/${MONGO_INITDB_DATABASE}
             - PORT=${NODE_PORT}
         command: 
             npm run dev

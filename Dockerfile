@@ -19,6 +19,7 @@ COPY . .
 
 # Build TypeScript
 # will build the code, aka transpile typescript to javascript so node can read it
+# ***** ↓ FOR PROD ↓ *****
 # RUN npm run build
 
 # Expose port
@@ -26,5 +27,6 @@ EXPOSE 5001
 
 # Run the app
 # run the compiled javascript code
+# ***** ↓ FOR PROD ↓ *****
 # CMD ["node", "dist/server.js"]
 CMD ["npm", "run", "dev"]
