@@ -15,7 +15,7 @@ RUN npm i
 
 # Copy source code
 # copy the content of the current folder into the current destination folder, which is app 
-COPY . .
+# COPY . .
 
 # Build TypeScript
 # will build the code, aka transpile typescript to javascript so node can read it
@@ -23,7 +23,7 @@ COPY . .
 # RUN npm run build
 
 # Expose port
-EXPOSE 5001
+# EXPOSE 5001
 
 # Run the app
 # run the compiled javascript code

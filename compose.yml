@@ -1,36 +1,36 @@
 services:
-    backend:
-        build: .
-        container_name: cityRankingHub_backend
-        ports:
-            - "${NODE_PORT}:${NODE_PORT}"
-        # ***** ↓ FOR PROD ↓ *****
-        volumes:
-            - .:/app # here, /app is being synchronised with the current local folder
-            - /app/node_modules # on the other hand, node_module has its own volume inside the docker container
-        environment:
-            # - MONGODB_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@db:${MONGO_PORT}/${MONGO_INITDB_DATABASE}
-            - PORT=${NODE_PORT}
-        command: 
-            npm run dev
-            # npm run start
-        depends_on:
-            - db
 
-    db:
-        image: mongo:8
-        container_name: cityRankingHub_db
+    backend:
+        image: node_backend:1 # providing a name for the image, giving it a tag for the version
+        container_name: ${SERVER_HOST} # providing a name for the container
+        build: 
+            context: . # providing the path of where it can find the Dockerfile
+            dockerfile: Dockerfile
+        env_file: .env
         ports:
-            - "${MONGO_PORT}:${MONGO_PORT}"
+            - ${NODE_PORT}:${NODE_PORT}
+        volumes:
+            - .:/app # here, /app is being linked with the current local folder
+            - node_backend_modules:/app/node_modules # here, node_modules refer to the persistent volume node_modules, given at the bottom of the file. It will contains the node modules persistently
+        # command: 
+        #     npm run dev
+        #     npm run start
+        depends_on:
+            - database
+
+    database:
+        image: mongo_database:1 # providing a name for the image, giving it a tag for the version
+        container_name: ${DATABASE_HOST}
+        build: 
+            context: database/
+            dockerfile: Dockerfile
+        env_file: .env
+        ports:
+            - ${MONGO_PORT}:${MONGO_PORT}
         volumes:
             - mongo_data:/data/db
-        environment:
-            # those variables below are recognised by docker when initialising the container
-            # it will sets up the admin user with these credentials (this user can manage all databases in the instance of mongoDB)
-            # it will create the given database
-            - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-            - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-            - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
 
+# persistent volumes that will be kept when running docker compose up again
 volumes:
     mongo_data:
+    node_backend_modules:
