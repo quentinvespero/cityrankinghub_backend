@@ -2,7 +2,7 @@ services:
 
     backend:
         image: node_backend:1 # providing a name for the image, giving it a tag for the version
-        container_name: ${SERVER_HOST} # providing a name for the container
+        container_name: ${NODE_HOST} # providing a name for the container
         build: 
             context: . # providing the path of where it can find the Dockerfile
             dockerfile: Dockerfile
@@ -20,7 +20,7 @@ services:
 
     database:
         image: mongo_database:1 # providing a name for the image, giving it a tag for the version
-        container_name: ${DATABASE_HOST}
+        container_name: ${MONGO_HOST}
         build: 
             context: database/
             dockerfile: Dockerfile
