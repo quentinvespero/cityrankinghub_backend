@@ -8,10 +8,12 @@ db.auth(process.env.MONGO_INITDB_ROOT_USERNAME, process.env.MONGO_INITDB_ROOT_PA
 
 print("Connecting to database: " + process.env.MONGO_INITDB_DATABASE)
 
+// changing for the database of the app
 db = db.getSiblingDB(process.env.MONGO_INITDB_DATABASE)
 
 print("Connected to database: " + db.getName())
 
+// appuser creation, the user that will perform the actions through nodejs
 try {
     db.createUser({
         user: process.env.MONGO_APPUSER_USERNAME,
@@ -33,5 +35,3 @@ try {
 catch (error) {
     print('--------------------------error when trying to create the collection----------- : ', error)
 }
-
-print('user created successfully it seems')
