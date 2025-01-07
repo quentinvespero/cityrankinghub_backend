@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { Request, Response } from 'express'
 import dbConnection from './config/dbConnection'
 
 const app = express()
@@ -7,7 +7,7 @@ const app = express()
 app.use(express.json())
 
 // routes
-// app.get('/api/cityRankingHub')
+app.get('/', (req:Request, res:Response) => res.send('API is working :)'))
 
 // db connection
 dbConnection()
