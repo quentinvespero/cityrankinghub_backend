@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
 import Review from '../models/review.model'
 
+// creating a review
+// the request will have to provide the city id/name
 export const createReview = async (req: Request, res: Response) => {
     try {
         const review = new Review(req.body)
@@ -9,5 +11,16 @@ export const createReview = async (req: Request, res: Response) => {
     }
     catch (error) {
         res.status(500).json({message:'Error creating review', error:error})
+    }
+}
+
+// get the reviews for a city
+// the request will have to provide the city id/name
+export const getReviewsOfCity = async (req:Request, res:Response) => {
+    try {
+        const
+    }
+    catch (error) {
+        
     }
 }
