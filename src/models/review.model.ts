@@ -7,7 +7,7 @@ interface Review extends Document {
         isDoomed: boolean
     }
     reviewerContext: {
-        timeLivedInCity: string
+        timeLivedInCityIfNewComer: string
         residencyStatus: 'tourist'|'native'|'new comer'
     }
     cityId: string // will change it later to link it to the city collection
@@ -37,7 +37,7 @@ const reviewSchema = new Schema<Review>({
         isDoomed: { type: Boolean, default: false },
     },
     reviewerContext: {
-        timeLivedInCity: { type: String, required: true },
+        timeLivedInCityIfNewComer: { type: String, required: false },
         residencyStatus: { type: String, required: true },
     },
     cityId: { type: String, required: true },
