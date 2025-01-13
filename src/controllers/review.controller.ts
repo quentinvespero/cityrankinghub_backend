@@ -6,6 +6,7 @@ import Review from '../models/review.model'
 export const createReview = async (req: Request, res: Response) => {
     try {
         const review = new Review(req.body)
+        
         await review.save()
         res.status(201).json(review)
     }
@@ -15,12 +16,15 @@ export const createReview = async (req: Request, res: Response) => {
 }
 
 // get the reviews for a city
-// the request will have to provide the city id/name
+// the request will have to provide the cityId
 export const getReviewsOfCity = async (req:Request, res:Response) => {
     try {
-        const
+        const cityId = req.params.cityId // getting cityId from the request
+        const reviewsOfTheCity = await Review.find({cityId:cityId}) // retrieving the documents in Review collection, that have the same cityId value as the one provided by the request
+
+        res.status(200).json(reviewsOfTheCity)
     }
     catch (error) {
-        
+        res.status(500).json({message:'error fetching reviews...', error:error})
     }
 }

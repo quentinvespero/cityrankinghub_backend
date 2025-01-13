@@ -1,5 +1,9 @@
-import { router } from "../config/globalConfig";
+import { Router } from 'express'
+import { createReview, getReviewsOfCity } from "../controllers/review.controller"
 
-router.get('/', (req:Request, res:Response) => {res.send('API is working :)')})
+const router = Router()
 
-export 
+router.post('/', createReview) // posting a review
+router.get('/', getReviewsOfCity) // getting reviews of a city
+
+export default router
