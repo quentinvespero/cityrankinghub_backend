@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import Review from '../models/review.model'
+import City from '../models/city.model'
 
 // creating a review
 // the request will have to provide the city id/name
@@ -9,7 +10,7 @@ export const createReview = async (req: Request, res: Response) => {
         
         await review.save()
         
-        await 
+        await City
         
         res.status(201).json(review)
     }
