@@ -8,6 +8,9 @@ export const createReview = async (req: Request, res: Response) => {
         const review = new Review(req.body)
         
         await review.save()
+        
+        await 
+        
         res.status(201).json(review)
     }
     catch (error) {
