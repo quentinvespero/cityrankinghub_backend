@@ -10,7 +10,10 @@ export const createReview = async (req: Request, res: Response) => {
         
         await review.save()
         
-        await City
+        await City.findByIdAndUpdate(
+            req.body.city,
+            { $push: {$reviews} }
+        )
         
         res.status(201).json(review)
     }
