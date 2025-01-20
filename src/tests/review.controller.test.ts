@@ -1,4 +1,4 @@
-import { Request } from 'express'
+import { Request, Response } from 'express'
 import { describe, expect, it, vi } from 'vitest'
 import Review from '../models/review.model'
 import * as reviewController from '../controllers/review.controller'
@@ -82,6 +82,43 @@ describe('Review Controller', () => {
             expect(res.json).toHaveBeenCalledWith({
                 message: 'Error creating review',
                 error: new Error('Failed to save'),
+            })
+        })
+    })
+
+    
+    describe('getReviewsOfCity', () => {
+        it('should fetch all reviews', async () => {
+            const mockReviews = [{ comment: 'Great city!' }]
+            const req = {} as Request
+            const res = {
+                status: vi.fn().mockReturnThis(),
+                json: vi.fn(),
+            } as unknown as Response
+
+            (Review.find as any).mockResolvedValue(mockReviews)
+
+            await reviewController.getReviewsOfCity(req, res)
+
+            expect(res.status).toHaveBeenCalledWith(200)
+            expect(res.json).toHaveBeenCalledWith(mockReviews)
+        })
+
+        it('should return an error if fetching reviews fails', async () => {
+            const req = {} as Request
+            const res = {
+                status: vi.fn().mockReturnThis(),
+                json: vi.fn(),
+            } as unknown as Response
+
+            (Review.find as any).mockRejectedValue(new Error('Fetch failed'))
+
+            await reviewController.getReviewsOfCity(req, res)
+
+            expect(res.status).toHaveBeenCalledWith(500)
+            expect(res.json).toHaveBeenCalledWith({
+                message: 'Error fetching reviews',
+                error: new Error('Fetch failed'),
             })
         })
     })

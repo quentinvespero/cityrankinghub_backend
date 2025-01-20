@@ -8,7 +8,7 @@ interface Review extends Document {
     }
     reviewerContext: {
         timeLivedInCityIfNewComer: string
-        residencyStatus: 'tourist'|'native'|'new comer'
+        residencyStatus: 'tourist' | 'native' | 'new comer'
     }
     cityId: string // will change it later to link it to the city collection
     ratings: {
@@ -30,34 +30,37 @@ interface Review extends Document {
     comment: string
 }
 
-const reviewSchema = new Schema<Review>({
-    reviewRating: {
-        upvote: { type: Number, default: 0 },
-        downvote: { type: Number, default: 0 },
-        isDoomed: { type: Boolean, default: false },
+const reviewSchema = new Schema<Review>(
+    {
+        reviewRating: {
+            upvote: { type: Number, default: 0 },
+            downvote: { type: Number, default: 0 },
+            isDoomed: { type: Boolean, default: false },
+        },
+        reviewerContext: {
+            timeLivedInCityIfNewComer: { type: String, required: false },
+            residencyStatus: { type: String, required: true },
+        },
+        cityId: { type: String, required: true },
+        ratings: {
+            overall: { type: Number, min: -5, max: 5, required: true },
+            safety: { type: Number, min: -5, max: 5, required: true },
+            transport: { type: Number, min: -5, max: 5, required: true },
+            culture: { type: Number, min: -5, max: 5, required: true },
+            healthFacilities: { type: Number, min: -5, max: 5, required: true },
+            jobOpportunities: { type: Number, min: -5, max: 5, required: true },
+            weather: { type: Number, min: -5, max: 5, required: true },
+            walkability: { type: Number, min: -5, max: 5, required: true },
+            nightlife: { type: Number, min: -5, max: 5, required: true },
+            cleanliness: { type: Number, min: -5, max: 5, required: true },
+            food: { type: Number, min: -5, max: 5, required: true },
+            costOfLiving: { type: Number, min: -5, max: 5, required: true },
+            friendliness: { type: Number, min: -5, max: 5, required: true },
+            sportsAndRecreation: { type: Number, min: -5, max: 5, required: true },
+        },
+        comment: { type: String },
     },
-    reviewerContext: {
-        timeLivedInCityIfNewComer: { type: String, required: false },
-        residencyStatus: { type: String, required: true },
-    },
-    cityId: { type: String, required: true },
-    ratings: {
-        overall: { type: Number, required: true },
-        safety: { type: Number, required: true },
-        transport: { type: Number, required: true },
-        culture: { type: Number, required: true },
-        healthFacilities: { type: Number, required: true },
-        jobOpportunities: { type: Number, required: true },
-        weather: { type: Number, required: true },
-        walkability: { type: Number, required: true },
-        nightlife: { type: Number, required: true },
-        cleanliness: { type: Number, required: true },
-        food: { type: Number, required: true },
-        costOfLiving: { type: Number, required: true },
-        friendliness: { type: Number, required: true },
-        sportsAndRecreation: { type: Number, required: true },
-    },
-    comment: { type: String },
-})
+    { timestamps: true }
+)
 
 export default mongoose.model<Review>('Review', reviewSchema)
