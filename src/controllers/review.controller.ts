@@ -16,12 +16,30 @@ export const createReview = async (req: Request, res: Response) => {
     try {
         // creating and saving the review document in the review collection
         const review = new Review(req.body)
-        
+
+        // save the review object, as part of the context of the session.
+        // ({session}) tells mongoDB to isolate the operations performed within the session, until it's fully completed
         await review.save({session})
 
         // finding the city
-        const city = await City.findById(review.cityId).session(session)
+        const city = await City.findById(review.cityId).session(session) // here, at the end, adding the session make it part of the transaction
         if (!city) throw new Error('City not found')
+            
+        // since the const "city" is being part of the transaction, with the addition of .session(session) at the end, 
+        // the 2 operations below are being performed within it
+
+        // increasing the totalReviews value for each review added for a city
+        city.totalReviews += 1
+
+        // update averageRatings
+        // below, for each properties in review.ratings
+        for (const propertyName in review.ratings) {
+            if (propertyName in city.averageRatings) {
+                
+            }
+            // we use the review's value to update the value of the corresponding property in city.averageRatings
+            city.averageRatings[propertyName] = (city.averageRatings[propertyName] * (city.totalReviews - 1) + review.ratings[propertyName]) / city.totalReviews
+        }
 
         res.status(201).json(review)
     }

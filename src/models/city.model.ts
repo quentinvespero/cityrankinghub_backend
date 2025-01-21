@@ -14,6 +14,7 @@ interface City extends Document {
     cityPopulation: number
     urbanAreaPopulation: number
     averageRatings: {
+        overall: number
         safety: number
         transport: number
         culture: number
@@ -47,6 +48,7 @@ const citySchema = new Schema<City>(
         cityPopulation: Number,
         urbanAreaPopulation: { type: Number, min: 0, required: true },
         averageRatings: {
+            overall: { type: Number, min: -5, max: 5, required: true },
             safety: { type: Number, min: -5, max: 5, required: true },
             transport: { type: Number, min: -5, max: 5, required: true },
             culture: { type: Number, min: -5, max: 5, required: true },
