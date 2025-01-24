@@ -1,9 +1,9 @@
-import { Router } from 'express'
-import { createReview, getReviewsOfCity } from "../controllers/review.controller"
+import express from 'express'
+import { createReview, getCityReviews } from '../controllers/review.controller'
 
-const router = Router()
+const router = express.Router()
 
-router.post('/', createReview) // posting a review
-router.get('/', getReviewsOfCity) // getting reviews of a city
+router.post('/', createReview)
+router.get('/:cityId', getCityReviews)
 
 export default router
