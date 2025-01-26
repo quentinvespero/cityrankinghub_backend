@@ -1,11 +1,11 @@
-import { Request, Response } from 'express'
+import { RequestHandler } from 'express'
 import Review from '../models/review.model'
 import City from '../models/city.model'
 import mongoose from 'mongoose'
 
 // creating a review
 // the request will have to provide the city id/name
-export const createReview = async (req: Request, res: Response) => {
+export const createReview:RequestHandler = async (req, res) => {
     // starting a session
     const session = await mongoose.startSession()
 
@@ -63,11 +63,11 @@ export const createReview = async (req: Request, res: Response) => {
 
 // get all the reviews submitted for a given city
 // the request will have to provide the cityId
-export const getCityReviews = async (req: Request, res: Response) => {
+export const getCityReviews: RequestHandler = async (req, res) => {
     try {
         const { cityId } = req.params // Extract cityId from request parameters
 
-        if (!cityId) return res.status(400).json({ message: 'City ID is required' }) // Validate input
+        if (!cityId) res.status(400).json({ message: 'City ID is required' }) // Validate input
 
         const cityReviews = await Review.find({ cityId }) // Query reviews by cityId
 
@@ -76,5 +76,23 @@ export const getCityReviews = async (req: Request, res: Response) => {
     catch (error) {
         console.error('Error fetching city reviews:', error) // Log the error for debugging
         res.status(500).json({ message: 'Error fetching reviews', error: error }) // Return error details
+    }
+}
+
+export const getLatestReviews:RequestHandler = async (req, res) => {
+    try {
+        // fetching the 20 latest reviews
+        const latestReviews = await Review.find()
+            // sort by latest
+            // createdAt is added to Review with timestamps option
+            // -1 refers to descending order, from new to old documents. (Whereas 1 would have meant ascending, from old to new)
+            .sort({createdAt:-1})
+            .limit(20)
+
+        res.status(200).json(latestReviews)
+    }
+    catch (error) {
+        console.error('Error fetching last 20 reviews:', error) // Log the error for debugging
+        res.status(500).json({ message: 'Error fetching last 20 reviews', error: error }) // Return error details
     }
 }

@@ -1,9 +1,15 @@
-import express from 'express'
-import { createReview, getCityReviews } from '../controllers/review.controller'
+import { Router } from 'express'
+import { createReview, getCityReviews, getLatestReviews } from '../controllers/review.controller'
 
-const router = express.Router()
+const router = Router()
 
+// route to create a review for a city
 router.post('/', createReview)
+
+// get the 20 last reviews, no matter the city
+router.get('/latest', getLatestReviews)
+
+// route to get all the reviews for a specific city
 router.get('/:cityId', getCityReviews)
 
 export default router
