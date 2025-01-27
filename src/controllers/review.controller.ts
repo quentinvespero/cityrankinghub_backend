@@ -5,7 +5,7 @@ import mongoose from 'mongoose'
 
 // creating a review
 // the request will have to provide the city id/name
-export const createReview:RequestHandler = async (req, res) => {
+export const createReview: RequestHandler = async (req, res) => {
     // starting a session
     const session = await mongoose.startSession()
 
@@ -19,12 +19,12 @@ export const createReview:RequestHandler = async (req, res) => {
 
         // save the review object, as part of the context of the session.
         // ({session}) tells mongoDB to isolate the operations performed within the session, until it's fully completed
-        await review.save({session})
+        await review.save({ session })
 
         // finding the city
         const city = await City.findById(review.cityId).session(session) // here, at the end, adding the session make it part of the transaction
         if (!city) throw new Error('City not found')
-            
+
         // since the const "city" is being part of the transaction, with the addition of .session(session) at the end, 
         // the 2 operations below are being performed within it
 
@@ -35,19 +35,19 @@ export const createReview:RequestHandler = async (req, res) => {
         for (const propertyName in review.ratings) {
             if (propertyName in city.averageRatings) {
                 // we use the review's value to update the value of the corresponding property in city.averageRatings
-                city.averageRatings[propertyName as keyof typeof city.averageRatings] = 
-                    (city.averageRatings[propertyName as keyof typeof city.averageRatings] * (city.totalReviews -1) + review.ratings[propertyName as keyof typeof review.ratings]) / city.totalReviews
+                city.averageRatings[propertyName as keyof typeof city.averageRatings] =
+                    (city.averageRatings[propertyName as keyof typeof city.averageRatings] * (city.totalReviews - 1) + review.ratings[propertyName as keyof typeof review.ratings]) / city.totalReviews
             }
         }
 
         // update city.globalRating
-        city.globalRating = 
+        city.globalRating =
             // Object.values() transform the object city.averageRatings into an array of values
-            Object.values(city.averageRatings).reduce((sum,rating) => sum + rating, 0)
-            / 
+            Object.values(city.averageRatings).reduce((sum, rating) => sum + rating, 0)
+            /
             Object.keys(city.averageRatings).length
-        
-        await city.save({session})
+
+        await city.save({ session })
 
         // commiting the transaction, submitting it to the database, if every operations are going well
         await session.commitTransaction()
@@ -79,14 +79,14 @@ export const getCityReviews: RequestHandler = async (req, res) => {
     }
 }
 
-export const getLatestReviews:RequestHandler = async (req, res) => {
+export const getLatestReviews: RequestHandler = async (req, res) => {
     try {
         // fetching the 20 latest reviews
         const latestReviews = await Review.find()
             // sort by latest
             // createdAt is added to Review with timestamps option
             // -1 refers to descending order, from new to old documents. (Whereas 1 would have meant ascending, from old to new)
-            .sort({createdAt:-1})
+            .sort({ createdAt: -1 })
             .limit(20)
 
         res.status(200).json(latestReviews)

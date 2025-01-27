@@ -4,7 +4,7 @@ import { createReview, getCityReviews, getLatestReviews } from '../controllers/r
 const router = Router()
 
 // route to create a review for a city
-router.post('/', createReview)
+router.post('/create', createReview)
 
 // get the 20 last reviews, no matter the city
 router.get('/latest', getLatestReviews)

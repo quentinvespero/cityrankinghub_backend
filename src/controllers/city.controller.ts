@@ -1,5 +1,4 @@
 import { RequestHandler } from "express"
-import mongoose from "mongoose"
 import City from '../models/city.model'
 
 // create a new city
@@ -16,14 +15,17 @@ export const createCity: RequestHandler = async (req, res) => {
         // return error if existingCity exist
         if (existingCity) res.status(400).json({ message: 'City already exists in this region' })
 
-        const city = new City(req.body)
+        // gathering the relevant fields, while excluding totalReviews and averageRatings
+        const { totalReviews, averageRatings, ...cityData } = req.body
+
+        const city = new City(cityData)
 
         await city.save()
 
-        res.status(201).json(city)
+        res.status(201).json(cityData)
     }
-    catch (error) {
-        res.status(400).json({ error: error })
+    catch (error: any) {
+        res.status(400).json({ message: 'Error creating city', error: error.message || 'an unexpected error occured' })
     }
 }
 

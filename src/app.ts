@@ -16,7 +16,7 @@ app.get('/', (req:Request, res:Response) => {res.send('API is working :)')})
 app.use('/review', reviewRoutes)
 
 // routes for city
-app.use('city', cityRoutes)
+app.use('/city', cityRoutes)
 
 // db connection
 dbConnection()
