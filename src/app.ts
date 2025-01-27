@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express'
 import dbConnection from './config/dbConnection'
 import reviewRoutes from './routes/review.routes'
+import cityRoutes from './routes/city.routes'
 
 const app = express()
 
@@ -13,6 +14,9 @@ app.get('/', (req:Request, res:Response) => {res.send('API is working :)')})
 
 // routes for reviews
 app.use('/review', reviewRoutes)
+
+// routes for city
+app.use('city', cityRoutes)
 
 // db connection
 dbConnection()
