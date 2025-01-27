@@ -8,9 +8,10 @@ interface Review extends Document {
     }
     reviewerContext: {
         timeLivedInCityIfNewComer: string
-        residencyStatus: 'tourist' | 'native' | 'new comer'
+        residencyStatus: 'Tourist' | 'Resident' | 'New comer'
     }
     cityId: string // will change it later to link it to the city collection
+    universe: string,
     ratings: {
         overall: number
         safety: number
@@ -41,6 +42,7 @@ const reviewSchema = new Schema<Review>(
             timeLivedInCityIfNewComer: { type: String, required: false },
             residencyStatus: { type: String, required: true },
         },
+        universe: String,
         cityId: { type: String, required: true },
         ratings: {
             overall: { type: Number, min: -5, max: 5, required: true, default:0 },

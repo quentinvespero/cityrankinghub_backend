@@ -30,11 +30,15 @@ export const createCity: RequestHandler = async (req, res) => {
 }
 
 // getting city informations and average review
+// the request must contains the name and region
 export const getCityInformations: RequestHandler = async (req, res) => {
     try {
-        const { cityId } = req.params
+        const { name, region } = req.params
 
-        const city = await City.findById(cityId)
+        const city = await City.findOne({
+            name,
+            'location.region':region
+        })
 
         if (!city) res.status(404).json({ message: 'City not found' })
 
