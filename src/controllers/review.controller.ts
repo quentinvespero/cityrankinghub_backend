@@ -16,7 +16,8 @@ export const createReview: RequestHandler = async (req, res) => {
 
     try {
         // extracting cityName and region from req.body and set them as const
-        const { cityName, region, ...reviewData } = req.body
+        // we also extract reviewItselfRating, to exclude it from the response
+        const { cityName, region, reviewItselfRating, ...reviewData } = req.body
 
         // searching the city document having the name and region from the request
         const city = await City.findOne({
@@ -49,8 +50,6 @@ export const createReview: RequestHandler = async (req, res) => {
         // below, we are iterating on the keys of the object review.ratings.
         // Instead of doing "const property in review.ratings, which would iterate over all the elements of the Review object, including some mongoose stuff"
         for (const property of Object.keys(review.ratings)) {
-            
-            console.log('-------------------- NIA_property --------------------',property)
 
             // we use the review's rating property value to update the value of the corresponding property in city.averageRatings
             city.averageRatings[property as keyof typeof city.averageRatings] =
@@ -71,29 +70,25 @@ export const createReview: RequestHandler = async (req, res) => {
                 / city.totalReviews
         }
 
-        // console.log('----------------------- NIA ------------------',Object.values(city.averageRatings).reduce((sum, rating) => sum + rating, 0))
-        console.log('----------------------- NIA ------------------', Object.values(city.averageRatings), '----------------------- NIA ------------------')
-        console.log('----------------------- NIA2 ------------------', city.totalReviews, '----------------------- NIA2 ------------------')
-        // console.log('----------------------- NIA2 ------------------',Object.keys(city.averageRatings).length)
-        // console.log('----------------------- NIA3 ------------------',city.averageRatings,'----------------------- NIA3 ------------------')
-
         // update city.globalRating
-        // city.globalRating =
-        //     // Object.values() is used to get the values of an object and turn them into an array. Here city.averageRatings
-        //     // 
-        //     Object.values(city.averageRatings).reduce((sum, rating) => sum + rating, 0)
-        //     /
-        //     Object.keys(city.averageRatings).length
+        city.globalRating =
+            // Object.values() is used to get the values of an object and turn them into an array of values, from the object city.averageRatings
+            // then reduce() is used to iterate over the array of values. 
+            // Each values will be added one after the other and they will be accumulated into totalRatingValues. 
+            // The initial value from where the accumulattion will start is 0, as shown with the ", 0" at the end
+            Object.values(city.averageRatings).reduce((totalRatingValues, ratingValue) => totalRatingValues + ratingValue, 0)
+            /
+            Object.keys(city.averageRatings).length // counting the amount of keys in averageRatings (14)
 
         // // await city.save({ session })
-        // await city.save()
+        await city.save()
 
         // commiting the transaction, submitting it to the database, if every operations are going well
         // await session.commitTransaction()
         // session.endSession()
 
         // send the response
-        res.status(201).json(review)
+        res.status(201).json(reviewData)
     }
     catch (error) {
         // session.abortTransaction()
