@@ -46,8 +46,12 @@ export const createReview: RequestHandler = async (req, res) => {
         // -------- info --------
 
         // update averageRatings
-        for (const property in review.ratings) {
+        // below, we are iterating on the keys of the object review.ratings.
+        // Instead of doing "const property in review.ratings, which would iterate over all the elements of the Review object, including some mongoose stuff"
+        for (const property of Object.keys(review.ratings)) {
             
+            console.log('-------------------- NIA_property --------------------',property)
+
             // we use the review's rating property value to update the value of the corresponding property in city.averageRatings
             city.averageRatings[property as keyof typeof city.averageRatings] =
 
@@ -69,20 +73,20 @@ export const createReview: RequestHandler = async (req, res) => {
 
         // console.log('----------------------- NIA ------------------',Object.values(city.averageRatings).reduce((sum, rating) => sum + rating, 0))
         console.log('----------------------- NIA ------------------', Object.values(city.averageRatings), '----------------------- NIA ------------------')
-        console.log('----------------------- NIA2 ------------------', city.totalReviews, '----------------------- NIA ------------------')
+        console.log('----------------------- NIA2 ------------------', city.totalReviews, '----------------------- NIA2 ------------------')
         // console.log('----------------------- NIA2 ------------------',Object.keys(city.averageRatings).length)
         // console.log('----------------------- NIA3 ------------------',city.averageRatings,'----------------------- NIA3 ------------------')
 
         // update city.globalRating
-        city.globalRating =
-            // Object.values() is used to get the values of an object and turn them into an array. Here city.averageRatings
-            // 
-            Object.values(city.averageRatings).reduce((sum, rating) => sum + rating, 0)
-            /
-            Object.keys(city.averageRatings).length
+        // city.globalRating =
+        //     // Object.values() is used to get the values of an object and turn them into an array. Here city.averageRatings
+        //     // 
+        //     Object.values(city.averageRatings).reduce((sum, rating) => sum + rating, 0)
+        //     /
+        //     Object.keys(city.averageRatings).length
 
-        // await city.save({ session })
-        await city.save()
+        // // await city.save({ session })
+        // await city.save()
 
         // commiting the transaction, submitting it to the database, if every operations are going well
         // await session.commitTransaction()
