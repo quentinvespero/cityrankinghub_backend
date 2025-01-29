@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose"
 
 interface Review extends Document {
-    reviewRating: {
+    reviewItselfRating: {
         upvote: number
         downvote: number
         isDoomed: boolean
@@ -33,7 +33,7 @@ interface Review extends Document {
 
 const reviewSchema = new Schema<Review>(
     {
-        reviewRating: {
+        reviewItselfRating: {
             upvote: { type: Number, default: 0 },
             downvote: { type: Number, default: 0 },
             isDoomed: { type: Boolean, default: false },

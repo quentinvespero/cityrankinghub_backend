@@ -5,7 +5,7 @@ import mongoose from 'mongoose'
 
 // creating a review
 // the request will have to provide the city id/name
-// ----- NOTE 270125 : giving up session for now, since it brings too much complexity (having to set up a mongo replica set), will bring it back later perhaps
+// ----- NOTE 270125 : giving up session/transaction for now, since it brings too much complexity (having to set up a mongo replica set), will bring it back later perhaps
 export const createReview: RequestHandler = async (req, res) => {
     // starting a session
     // const session = await mongoose.startSession()
@@ -46,21 +46,37 @@ export const createReview: RequestHandler = async (req, res) => {
         // -------- info --------
 
         // update averageRatings
-        for (const propertyName in review.ratings) {
-            if (propertyName in city.averageRatings) {
-                // we use the review's value to update the value of the corresponding property in city.averageRatings
-                city.averageRatings[propertyName as keyof typeof city.averageRatings] =
-                    (city.averageRatings[propertyName as keyof typeof city.averageRatings] * (city.totalReviews - 1) + review.ratings[propertyName as keyof typeof review.ratings]) / city.totalReviews
-            }
+        for (const property in review.ratings) {
+            
+            // we use the review's rating property value to update the value of the corresponding property in city.averageRatings
+            city.averageRatings[property as keyof typeof city.averageRatings] =
+
+                // below, to calculate the average, we first need to addition every reviews marks, and then divide this big number with the total amount of reviews
+                // So, since we don't have the whole history of marks, we multiply the value of the property with the total amount of reviews given
+                // we substract the current review in the total, with -1 (if there is already at least 1 review)
+                // then, to the total amount of review, we add our review
+                (
+                    city.averageRatings[property as keyof typeof city.averageRatings]
+                    // in the line below, we just check (in the case where there is no reviews yet) 
+                    // that the total of reviews is at least 1, before substracting 1
+                    // otherwise if total review is equal to 0, it would lead to -1
+                    * (city.totalReviews > 1 ? city.totalReviews - 1 : 0)
+                    + review.ratings[property as keyof typeof review.ratings]
+                )
+                // and finally, we divide it with the total of reviews, accounting the one we've just given this time
+                / city.totalReviews
         }
 
         // console.log('----------------------- NIA ------------------',Object.values(city.averageRatings).reduce((sum, rating) => sum + rating, 0))
-        console.log('----------------------- NIA ------------------',Object.values(city.averageRatings))
-        console.log('----------------------- NIA2 ------------------',Object.keys(city.averageRatings).length)
+        console.log('----------------------- NIA ------------------', Object.values(city.averageRatings), '----------------------- NIA ------------------')
+        console.log('----------------------- NIA2 ------------------', city.totalReviews, '----------------------- NIA ------------------')
+        // console.log('----------------------- NIA2 ------------------',Object.keys(city.averageRatings).length)
+        // console.log('----------------------- NIA3 ------------------',city.averageRatings,'----------------------- NIA3 ------------------')
 
         // update city.globalRating
         city.globalRating =
-            // Object.values() transform the object city.averageRatings into an array of values
+            // Object.values() is used to get the values of an object and turn them into an array. Here city.averageRatings
+            // 
             Object.values(city.averageRatings).reduce((sum, rating) => sum + rating, 0)
             /
             Object.keys(city.averageRatings).length
@@ -91,12 +107,12 @@ export const getCityReviews: RequestHandler = async (req, res) => {
 
         const city = await City.findOne({
             name,
-            'location.region':region
+            'location.region': region
         })
 
         if (!city) res.status(400).json({ message: 'City ID is required' }) // Validate input
 
-        const cityReviews = await Review.find({ cityId:city?._id }) // Query reviews by cityId
+        const cityReviews = await Review.find({ cityId: city?._id }) // Query reviews by cityId
 
         res.status(200).json(cityReviews) // Respond with the found reviews
     }
