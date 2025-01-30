@@ -10,7 +10,7 @@ interface Review extends Document {
         timeLivedInCityIfNewComer: string
         residencyStatus: 'Tourist' | 'Resident' | 'New comer'
     }
-    cityId: string // will change it later to link it to the city collection
+    cityId: Schema.Types.ObjectId // will change it later to link it to the city collection
     universe: string,
     ratings: {
         overall: number
@@ -43,7 +43,7 @@ const reviewSchema = new Schema<Review>(
             residencyStatus: { type: String, required: true },
         },
         universe: String,
-        cityId: { type: String, required: true },
+        cityId: { type: Schema.Types.ObjectId, ref:'City', required: true },
         ratings: {
             overall: { type: Number, min: -5, max: 5, required: true, default:0 },
             safety: { type: Number, min: -5, max: 5, required: true, default:0 },

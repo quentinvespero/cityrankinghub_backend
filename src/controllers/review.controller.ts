@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express'
 import Review from '../models/review.model'
 import City from '../models/city.model'
-import mongoose from 'mongoose'
+// import mongoose from 'mongoose'
 
 // creating a review
 // the request will have to provide the city id/name
@@ -17,13 +17,14 @@ export const createReview: RequestHandler = async (req, res) => {
     try {
         // extracting cityName and region from req.body and set them as const
         // we also extract reviewItselfRating, to exclude it from the response
-        const { cityName, region, reviewItselfRating, ...reviewData } = req.body
+        const { cityName, region, country, reviewItselfRating, ...reviewData } = req.body
 
         // searching the city document having the name and region from the request
         const city = await City.findOne({
             name: cityName,
-            'location.region': region
-        }) // here, adding the session at the end while referring to the session object previously created makes it part of the transaction
+            // 'location.region': region,
+            'location.country': country
+        })
         // }).session(session) // here, adding the session at the end while referring to the session object previously created makes it part of the transaction
 
         if (!city) throw new Error('City not found')
@@ -109,7 +110,11 @@ export const getCityReviews: RequestHandler = async (req, res) => {
             'location.region': region
         })
 
-        if (!city) res.status(400).json({ message: 'City ID is required' }) // Validate input
+        // check if city is found
+        if (!city) {
+            res.status(400).json({ message: 'City ID is required' }) 
+            return
+        }
 
         const cityReviews = await Review.find({ cityId: city?._id }) // Query reviews by cityId
 
@@ -117,7 +122,7 @@ export const getCityReviews: RequestHandler = async (req, res) => {
     }
     catch (error) {
         console.error('Error fetching city reviews:', error) // Log the error for debugging
-        res.status(500).json({ message: 'Error fetching reviews', error: error }) // Return error details
+        res.status(500).json({ message: 'Error fetching reviews', error }) // Return error details
     }
 }
 
@@ -134,6 +139,12 @@ export const getLatestReviews: RequestHandler = async (req, res) => {
             .sort({ createdAt: -1 })
             .limit(20) // Limit the number of reviews returned to 20
             .select('-reviewerContext -comment -__v -updatedAt') // excluding a few fields
+            // as indicated in the review schema, cityId is a reference of an _id's document in the collection City
+            // so here, it will use the id of cityId to find the document that refers to this _id in the City collection
+            // then it will get the value of the field 'name' in this document
+            // lastly, it will update cityId to transform it into an object with two properties "_id" and "name"
+            // lean() is something to make the response faster, while removing some extra mongoose overhead apparently 🤷🏻‍♂️
+            .populate('cityId', 'name').lean()
 
         res.status(200).json(latestReviews)
     }
