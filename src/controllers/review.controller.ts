@@ -88,7 +88,7 @@ export const createReview: RequestHandler = async (req, res) => {
         // session.endSession()
 
         // send the response
-        res.status(201).json(reviewData)
+        res.status(201).json({message:'Review created successfully'})
     }
     catch (error) {
         // session.abortTransaction()
@@ -124,12 +124,16 @@ export const getCityReviews: RequestHandler = async (req, res) => {
 export const getLatestReviews: RequestHandler = async (req, res) => {
     try {
         // fetching the 20 latest reviews
-        const latestReviews = await Review.find()
+        // the reviews where the key isDoomed has the value "true" will be excluded
+        // the $ne is a mongoDB operator that means Not Equal
+        const latestReviews = await Review.find({'reviewItselfRating.isDoomed': {$ne :true}})
+            
             // sort by latest
             // createdAt is added to Review with timestamps option
             // -1 refers to descending order, from new to old documents. (Whereas 1 would have meant ascending, from old to new)
             .sort({ createdAt: -1 })
-            .limit(20)
+            .limit(20) // Limit the number of reviews returned to 20
+            .select('-reviewerContext -comment -__v -updatedAt') // excluding a few fields
 
         res.status(200).json(latestReviews)
     }
