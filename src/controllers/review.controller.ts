@@ -38,6 +38,8 @@ export const createReview: RequestHandler = async (req, res) => {
         // await review.save({ session })
         await review.save()
 
+        // updateCityRatings() 
+
         // increasing the totalReviews value for each review added for a city
         city.totalReviews += 1
 
@@ -103,11 +105,12 @@ export const createReview: RequestHandler = async (req, res) => {
 // the request will have to provide the cityId
 export const getCityReviews: RequestHandler = async (req, res) => {
     try {
-        const { name, region } = req.query // Extract cityId from request's url query parameters
+        const { name, region, country } = req.query // Extracting the region/country/name of the city from the request
 
         const city = await City.findOne({
             name,
-            'location.region': region
+            // 'location.region': region
+            'location.country': country
         })
 
         // check if city is found
@@ -117,6 +120,8 @@ export const getCityReviews: RequestHandler = async (req, res) => {
         }
 
         const cityReviews = await Review.find({ cityId: city?._id }) // Query reviews by cityId
+            .limit(30)
+            .select('-__v -updatedAt') // excluding a few fields
 
         res.status(200).json(cityReviews) // Respond with the found reviews
     }
@@ -126,13 +131,13 @@ export const getCityReviews: RequestHandler = async (req, res) => {
     }
 }
 
-export const getLatestReviews: RequestHandler = async (req, res) => {
+// _ parameter indicate that it's intentionally unused
+export const getLatestReviews: RequestHandler = async (_, res) => {
     try {
         // fetching the 20 latest reviews
         // the reviews where the key isDoomed has the value "true" will be excluded
         // the $ne is a mongoDB operator that means Not Equal
         const latestReviews = await Review.find({'reviewItselfRating.isDoomed': {$ne :true}})
-            
             // sort by latest
             // createdAt is added to Review with timestamps option
             // -1 refers to descending order, from new to old documents. (Whereas 1 would have meant ascending, from old to new)

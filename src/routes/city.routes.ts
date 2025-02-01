@@ -7,6 +7,6 @@ const router = Router()
 router.post('/create',createCity)
 
 // getting city informations and average review
-router.get('/:id', getCityInformations)
+router.get('/', getCityInformations)
 
 export default router

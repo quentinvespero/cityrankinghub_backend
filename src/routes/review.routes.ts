@@ -10,6 +10,6 @@ router.post('/create', createReview)
 router.get('/latest', getLatestReviews)
 
 // route to get all the reviews for a specific city
-router.get('/:cityId', getCityReviews)
+router.get('/', getCityReviews)
 
 export default router
